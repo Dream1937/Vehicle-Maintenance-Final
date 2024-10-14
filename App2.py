@@ -1,4 +1,5 @@
 import tkinter as tk
+import joblib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -7,12 +8,12 @@ import warnings
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, mean_squared_error
 
 warnings.filterwarnings("ignore", message="X does not have valid feature names")
 
 # Read Dataset
-df = pd.read_csv(r"E:\Office Project work\Vehicle Recomendation system\Dataset1.csv")
+df = pd.read_csv(r"E:\Office Project work\Vehicle Maintenance Final\Dataset1.csv")
 
 
 # find Outlier
@@ -67,6 +68,7 @@ def submit():
         result_label.config(text=f"Engine Condition is Bad.")
 
 root = tk.Tk()
+
 root.title("Engine Parameters Input")
 
 parameters = [
@@ -93,3 +95,28 @@ result_label = tk.Label(root, text="")
 result_label.pack(pady=10)
 
 root.mainloop()
+
+model1 = joblib.load('saved_model.joblib')
+
+y_pred = best_model.predict(X_test)
+
+# Calculate Mean Squared Error
+mse = mean_squared_error(y_test, y_pred)
+
+plt.plot(mse, label='Training Loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.title('Loss Graph')
+plt.legend()
+plt.show()
+
+accuracy = accuracy_score(y_test,  y_pred)
+
+# Plotting the accuracy
+plt.figure(figsize=(8, 5))
+plt.bar(['Model'], [accuracy], color='blue')
+plt.ylim(0, 1)  # Set y-axis limits
+plt.ylabel('Accuracy')
+plt.title('Model Accuracy')
+plt.grid(axis='y')
+plt.show()
